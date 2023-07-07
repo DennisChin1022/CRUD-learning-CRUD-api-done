@@ -19,7 +19,12 @@ app.use(bodyparser.urlencoded({ extended : true}))
 
 app.set('view engine', 'ejs')
 
-app.use(express.static('public'))
+// app.use(express.static(__dirname + '/public/css'));
+// app.use(express.static('./public/css'))
+// app.use(express.static('./public/js'))
+
+app.use('/css', express.static(path.resolve(__dirname, "public/css")))
+app.use('/js', express.static(path.resolve(__dirname, "public/js")))
 
 app.use('/', require('./server/routes/router'))
 

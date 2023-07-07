@@ -23,6 +23,6 @@ var userschema = new mongoose.Schema({
 
 // module.exports = mongoose.model("Contact", contactSchema);
 
-const customerdb = mongoose.model('ABNBdb', userschema);
+const customerdb = mongoose.model('abnbdb', userschema);
 
 module.exports = customerdb;

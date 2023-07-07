@@ -20,8 +20,8 @@ exports.create = (req,res)=>{
     customer
         .save(customer)
         .then(data => {
-            res.send(data)
-            // res.redirect('/add-customer');
+            // res.send(data)
+            res.redirect('/add_customer');
         })
         .catch(err =>{
             res.status(500).send({
