@@ -2,7 +2,7 @@ $("#add_customer").submit(function(event){
     alert("Data Inserted Successfully!");
 })
 
-$("#update_user").submit(function(event){
+$("#update_customer").submit(function(event){
     event.preventDefault();
 
     var unindexed_array = $(this).serializeArray();
@@ -14,7 +14,7 @@ $("#update_user").submit(function(event){
 
 
     var request = {
-        "url" : `http://localhost:3000/api/users/${data.id}`,
+        "url" : `http://localhost:3000/api/customer/${data.id}`,
         "method" : "PUT",
         "data" : data
     }
@@ -25,7 +25,7 @@ $("#update_user").submit(function(event){
 
 })
 
-if(window.location.pathname == "/"){
+if(window.location.pathname == "/customer_details"){
     $ondelete = $(".table tbody td a.delete");
     $ondelete.click(function(){
         var id = $(this).attr("data-id")
@@ -44,3 +44,8 @@ if(window.location.pathname == "/"){
 
     })
 }
+
+
+$("#new_register").submit(function(event){
+    alert("Register Successfully!");
+})
