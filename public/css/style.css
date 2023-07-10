@@ -150,11 +150,20 @@ table{
     margin: auto;
 }
 
+.register{
+    max-width: 786px;
+    margin: auto;
+}
+
+#login .form-group,
+#register .form-group,
 #update_customer .form-group,
 #add_customer .form-group{
     margin: .4em 0;
 }
 
+#login .form-group input[type="text"],
+#register .form-group input[type="text"],
 #update_customer .form-group input[type="text"],
 #add_customer .form-group input[type="text"]{
     width: 100%;
@@ -166,11 +175,8 @@ table{
     border-radius: .2em;
 }
 
-#update_customer .form-group .radio,
-#add_customer .form-group .radio{
-    margin: 1em 2em;
-}
-
+#login .form-group .btn,
+#register .form-group .btn,
 #update_customer .form-group .btn,
 #add_customer .form-group .btn{
     width: 100%;
@@ -184,6 +190,8 @@ table{
     margin: .5em 0;
 }
 
+#login .form-group .btn:hover,
+#register .form-group .btn:hover,
 #update_customer .form-group .btn:hover,
 #add_customer .form-group .btn:hover{
     background-color: var(--dark);

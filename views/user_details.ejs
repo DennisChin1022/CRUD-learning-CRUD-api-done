@@ -1,0 +1,35 @@
+<%- include('partials/_header') %>
+
+<!-- ================================Main Site================================ -->
+
+<main id="site-main">
+    <div class="container">
+        <div class="box-nav d-flex justify-between">
+            <a href="/register" class="border-shadow">
+                <span class="text-gradient">New User<i class="fas fa-user"></i></span>
+            </a>
+        </div>
+        <br>
+    
+
+    <!-- form handling -->
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User Name:</th>
+                    <th>User Email:</th>
+                    <th>Password:</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%- include('partials/_show_user') %>
+            </tbody>
+        </table>
+
+    </div>
+</main>
+
+
+
