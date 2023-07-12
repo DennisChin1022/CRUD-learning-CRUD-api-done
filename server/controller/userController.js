@@ -16,29 +16,20 @@ const register = async (req, res) => {
             status: "FAILED",
             message: "Empty input fields!"
         });
-    }   else if (!/^[a-zA-z ]*$/.test(name)){
-        res.json({
-            status: "FAILED",
-            message: "Empty name entered"
-        })
-    }   else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)){
+    } else if (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]}))$/.test(email)){
         res.json({
             status: "FAILED",
             message: "Empty email entered"
         })
-    }   else if (password.length < 8){
-        res.json({
-            status: "FAILED",
-            message: "Password is too short!"
-        })
-    }   else{
+    }else{
         User.find({email}).then(result => {
             if (result.length){
                 res.json({
                     status: "FAILED",
                     message:"User with the provided email already exists"
                 })
-            } else{
+            } 
+            else{
                 const saltRounds = 10;
                 bcrypt.hash(password, saltRounds).then(hashedPassword => {
                     const newUser = new User ({
@@ -53,16 +44,6 @@ const register = async (req, res) => {
                         // res.send(data)
                         res.redirect('/');
                     })
-                    // newUser.save().then(result =>{
-                    //     res.json({
-                    //         status:"SUCCESS",
-                    //         message:"Signup successful",
-                    //         data: result,
-                    //     }).then(data => {
-                    //         // res.send(data)
-                    //         res.redirect('/');
-                    // })
-                    // })
                     .catch(err => {
                         res.json({
                             status:"FAILED",
@@ -135,5 +116,72 @@ const login = async (req, res) => {
             
     })
 }
+
+const find = async (req, res)=>{
+
+    if(req.query.id){
+        const id = req.query.id;
+
+        User.findById(id)
+            .then(data =>{
+                if(!data){
+                    res.status(404).send({ message : "Not found user with id "+ id})
+                }else{
+                    res.send(data)
+                }
+            })
+            .catch(err =>{
+                res.status(500).send({ message: "Erro retrieving user with id " + id})
+            })
+
+    }else{
+        User.find()
+            .then(customer => {
+                res.send(customer)
+            })
+            .catch(err => {
+                res.status(500).send({ message : err.message || "Error Occurred while retriving user information" })
+            })
+    }
+
+    
+}
+
+const Delete = async(req, res)=>{
+    const id = req.params.id;
+
+    User.findByIdAndDelete(id)
+        .then(data => {
+            if(!data){
+                res.status(404).send({ message : `Cannot Delete with id ${id}. Maybe id is wrong`})
+            }else{
+                res.send({
+                    message : "User was deleted successfully!"
+                })
+            }
+        })
+        .catch(err =>{
+            res.status(500).send({
+                message: "Could not delete User with id=" + id
+            });
+        });
+}
                 
-module.exports = { register, login };
+const Update = async(req, res)=>{
+    const id = req.params.id;
+    User.findByIdAndUpdate(id, req.body, { useFindAndModify: false})
+        .then(data => {
+            if(!data){
+                res.status(404).send({ message : `Cannot Update user with ${id}. Maybe user not found!`})
+            }else{
+                res.send(data)
+            }
+        })
+        .catch(err =>{
+            res.status(500).send({ message : "Error Update user information"})
+        })
+}
+
+
+
+module.exports = { register, login, find, Delete, Update };

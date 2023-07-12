@@ -158,6 +158,7 @@ table{
 #login .form-group,
 #register .form-group,
 #update_customer .form-group,
+#update_user .form-group,
 #add_customer .form-group{
     margin: .4em 0;
 }
@@ -165,6 +166,7 @@ table{
 #login .form-group input[type="text"],
 #register .form-group input[type="text"],
 #update_customer .form-group input[type="text"],
+#update_user .form-group input[type="text"],
 #add_customer .form-group input[type="text"]{
     width: 100%;
     padding: .6em 1em;
@@ -178,6 +180,7 @@ table{
 #login .form-group .btn,
 #register .form-group .btn,
 #update_customer .form-group .btn,
+#update_user .form-group .btn,
 #add_customer .form-group .btn{
     width: 100%;
     padding: .9em 1em;
@@ -193,6 +196,7 @@ table{
 #login .form-group .btn:hover,
 #register .form-group .btn:hover,
 #update_customer .form-group .btn:hover,
+#update_user .form-group .btn:hover,
 #add_customer .form-group .btn:hover{
     background-color: var(--dark);
     color: var(--border);

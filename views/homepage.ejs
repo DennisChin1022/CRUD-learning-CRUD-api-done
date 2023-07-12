@@ -7,21 +7,28 @@
     <div class="text-center">
         <a href="/" class="nav-brand text-dark">Welcome to ABNB insurance</a>
     </div>
-    <div class="form-title text-center">
-        <h2 class="text-dark">Sign In</h2>
-    </div>
-    <form action="/" method="POST" id="login">
-
-        <div class="container signin">
-            <p>Already have an account? <a href="/signin">Sign in</a>.</p>
-        </div>
-
+        <form action="/api/user/login" method="POST" id="login">
+            <div class="login">
+                    <div class="form-group">
+                        <label for="email" class="text-light">Email:</label>
+                        <input type="text" placeholder="Enter Email" name="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="text-light">Password:</label>
+                        <input type="text" placeholder="Enter Password" name="password" id="password" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn text-dark update">Sign In</button>
+                    </div>
+            </div>
+    
         <div class="container signin">
             <p>Are You New? <a href="/register">Register</a>.</p>
         </div>
+    
 
     </form>
-
+</div>
 </main>
 
 <%- include('partials/_footer') %>

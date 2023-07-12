@@ -11,10 +11,6 @@ route.get('/add_customer', services.add_customer)
 
 route.get('/update_customer', services.update_customer)
 
-route.get('/register', services.register)
-
-route.get('/signin', services.signin)
-
 
 //API for customer
 route.post('/api/customer', controller.create);

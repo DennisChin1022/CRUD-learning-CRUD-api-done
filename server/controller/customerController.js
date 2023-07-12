@@ -1,5 +1,6 @@
 var customerdb = require('../model/customerModel');
 
+
 // create and save new user
 exports.create = (req,res)=>{
     // validate request
@@ -21,7 +22,7 @@ exports.create = (req,res)=>{
         .save(customer)
         .then(data => {
             // res.send(data)
-            res.redirect('/add_customer');
+            res.redirect('/customer_details');
         })
         .catch(err =>{
             res.status(500).send({
