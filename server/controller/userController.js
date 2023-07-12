@@ -1,121 +1,79 @@
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
 
 //@desc Register a user
 //@route POST /api/users/register
 //@access public
-const register = async (req, res) => {
-    let {name, email, password} = req.body;
-    name = name.trim();
-    email = email.trim();
-    password = password.trim();
-
-    if(name == "" || email == "" || password == "" ){
-        res.json({
-            status: "FAILED",
-            message: "Empty input fields!"
-        });
-    } else if (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]}))$/.test(email)){
-        res.json({
-            status: "FAILED",
-            message: "Empty email entered"
-        })
-    }else{
-        User.find({email}).then(result => {
-            if (result.length){
-                res.json({
-                    status: "FAILED",
-                    message:"User with the provided email already exists"
-                })
-            } 
-            else{
-                const saltRounds = 10;
-                bcrypt.hash(password, saltRounds).then(hashedPassword => {
-                    const newUser = new User ({
-                        name,
-                        email,
-                        password: hashedPassword,
-
-                    });
-                    newUser
-                        .save(newUser)
-                        .then(data => {
-                        // res.send(data)
-                        res.redirect('/');
-                    })
-                    .catch(err => {
-                        res.json({
-                            status:"FAILED",
-                            message:"An error occurred while saving user account!"
-                        })
-                    })
-                })
-                .catch(err => {
-                    res.json({
-                        status:"FAILED",
-                        message:"An error occurred while hashing password!"
-                    })
-                })
-            }
-        }).catch(err => {
-            console.log(err);
-            res.json({
-                status:"FAILED",
-                message:"An error occurred while checking for existing user!"
-            })
-        })
+const handleErrors = (err) => {
+    console.log(err.message, err.code);
+    let errors = { email: '', password: '' };
+  
+    // incorrect email
+    if (err.message === 'incorrect email') {
+      errors.email = 'That email is not registered';
     }
+  
+    // incorrect password
+    if (err.message === 'incorrect password') {
+      errors.password = 'That password is incorrect';
+    }
+  
+    // duplicate email error
+    if (err.code === 11000) {
+      errors.email = 'that email is already registered';
+      return errors;
+    }
+  
+    // validation errors
+    if (err.message.includes('user validation failed')) {
+      // console.log(err);
+      Object.values(err.errors).forEach(({ properties }) => {
+        // console.log(val);
+        // console.log(properties);
+        errors[properties.path] = properties.message;
+      });
+    }
+  
+    return errors;
+  }
 
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (id) => {
+  return jwt.sign({ id }, 'test123', {
+    expiresIn: maxAge
+  });
 };
 
-const login = async (req, res) => {
-    let {email, password} = req.body;
-    email = email.trim();
-    password = password.trim();
+const register = async (req, res) => {
+    const { name, email, password } = req.body;
+  
+    try {
+      const user = await User.create({ name, email, password });
+      const token = createToken(user._id);
+      res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.status(201).json({ user: user._id });
+    }
+    catch(err) {
+      const errors = handleErrors(err);
+      res.status(400).json({ errors });
+    }
+   
+  }
 
-    if( email == "" || password == "" ){
-        res.json({
-            status: "FAILED",
-            message: "Please fill in your Email and Password"
-        });
-    }   
-        User.find({email}).then(data => {
-            if (data){
-                const hashedPassword = data[0].password;
-                bcrypt.compare(password, hashedPassword).then(result => {
-                    if(result){
-                        res.redirect('/customer_details');
-                    }
-                    else{
-                        res.json ({
-                            status: "FAILED",
-                            message: "Invalid password entered!"
-                        })
-                    }
-                })
-                .catch(err => {
-                    res.json({
-                    status: "FAILED",
-                    message: "An eror occured while comparing passwords"
-                    })
-                })
-            }
-            else {
-                res.json({
-                    status: "FAILED",
-                    message: "Invalid credentials entered!"
-                    })
-            }
-        })
-        .catch(err => {
-            res.json({
-            status: "FAILED",
-            message: "An eror occured while checking for existing"
-            })
-            
-    })
-}
+const login = async (req, res) => {
+    const {email, password} = req.body;
+    try {
+        const user = await User.login(email, password);
+        const token = createToken(user._id);
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(200).json({ user: user._id });
+      } 
+      catch (err) {
+        const errors = handleErrors(err);
+        res.status(400).json({ errors });
+      }
+    
+    }
 
 const find = async (req, res)=>{
 

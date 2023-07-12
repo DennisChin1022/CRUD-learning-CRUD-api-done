@@ -1,25 +1,44 @@
-const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const User = require('../model/userController');
 
-const validateToken = asyncHandler(async (req, res, next) => {
-  let token;
-  let authHeader = req.headers.Authorization || req.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer")) {
-    token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECERT, (err, decoded) => {
+const requireAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  // check json web token exists & is verified
+  if (token) {
+    jwt.verify(token, 'net ninja secret', (err, decodedToken) => {
       if (err) {
-        res.status(401);
-        throw new Error("User is not authorized");
+        console.log(err.message);
+        res.redirect('/login');
+      } else {
+        console.log(decodedToken);
+        next();
       }
-      req.user = decoded.user;
-      next();
     });
-
-    if (!token) {
-      res.status(401);
-      throw new Error("User is not authorized or token is missing");
-    }
+  } else {
+    res.redirect('/login');
   }
-});
+};
 
-module.exports = validateToken;
+// check current user
+const checkUser = (req, res, next) => {
+  const token = req.cookies.jwt;
+  if (token) {
+    jwt.verify(token, 'net ninja secret', async (err, decodedToken) => {
+      if (err) {
+        res.locals.user = null;
+        next();
+      } else {
+        let user = await User.findById(decodedToken.id);
+        res.locals.user = user;
+        next();
+      }
+    });
+  } else {
+    res.locals.user = null;
+    next();
+  }
+};
+
+
+module.exports = { requireAuth, checkUser };
